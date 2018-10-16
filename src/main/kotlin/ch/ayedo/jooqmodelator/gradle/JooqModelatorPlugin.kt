@@ -34,6 +34,8 @@ open class JooqModelatorPlugin : Plugin<Project> {
                 migrationsPaths = config.migrationsPaths?.map({ strPath -> Paths.get(strPath) })
                     ?: throw IncompletePluginConfigurationException("path to the migration files (migrationsPaths)")
 
+                schemas = config.schemas
+
                 dockerLabelKey = config.labelKey
 
                 dockerEnv = config.dockerEnv

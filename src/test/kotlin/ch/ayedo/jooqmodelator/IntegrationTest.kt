@@ -2,6 +2,7 @@ package ch.ayedo.jooqmodelator
 
 import ch.ayedo.jooqmodelator.IntegrationTest.Database.MARIADB
 import ch.ayedo.jooqmodelator.IntegrationTest.Database.POSTGRES
+import ch.ayedo.jooqmodelator.core.Modelator
 import ch.ayedo.jooqmodelator.core.configuration.Configuration
 import ch.ayedo.jooqmodelator.core.configuration.DockerConfig
 import ch.ayedo.jooqmodelator.core.configuration.HealthCheckConfig
@@ -235,6 +236,32 @@ class IntegrationTest {
 
     }
 
+    @Test
+    fun schemasTest() {
+
+        val jooqConfig = createJooqConfig(POSTGRES)
+
+        val config = Configuration(
+            dockerConfig = DockerConfig(
+                tag = "postgres:9.5",
+                env = listOf("POSTGRES_DB=postgres", "POSTGRES_USER=postgres", "POSTGRES_PASSWORD=secret"),
+                portMapping = PortMapping(5432, 5432)),
+            healthCheckConfig = HealthCheckConfig(),
+            migrationConfig = MigrationConfig(
+                engine = MigrationEngine.FLYWAY,
+                migrationsPaths = getMigrationPaths("/migrations"),
+                schemas = listOf("schema1")),
+            jooqConfigPath = jooqConfig.toPath()
+        )
+
+        createBuildFile(config)
+
+        assertBuildOutcome(SUCCESS)
+
+        assertBuildOutcome(SUCCESS, allowIncremental = false)
+
+    }
+
     private fun createJooqConfig(database: Database, port: Int? = null): File {
 
         File("${tempDir.root.absolutePath}/jooqConfig.xml").delete()
@@ -325,12 +352,18 @@ class IntegrationTest {
         }
     }
 
-    private fun assertBuildOutcome(targetOutcome: TaskOutcome) {
+    private fun assertBuildOutcome(targetOutcome: TaskOutcome, allowIncremental: Boolean = true) {
+
+        var arguments = listOf("generateJooqMetamodel", "--stacktrace")
+
+        if (allowIncremental) {
+            arguments += "--rerun-tasks"
+        }
 
         val result = GradleRunner.create()
             .withPluginClasspath()
             .withProjectDir(tempDir.root)
-            .withArguments("generateJooqMetamodel", "--stacktrace")
+            .withArguments(arguments)
             .withDebug(true)
             .build()
 
@@ -355,11 +388,13 @@ class IntegrationTest {
 
                 jooqOutputPath = '$jooqOutputPath'
 
-                migrationsPaths = ${config.migrationConfig.migrationsPaths.joinToString(prefix = "[", postfix = "]") { "'$it'" }}
+                migrationsPaths = ${asGroovyList(config.migrationConfig.migrationsPaths)}
+
+                schemas = ${asGroovyList(config.migrationConfig.schemas)}
 
                 dockerTag = '${config.dockerConfig.tag}'
 
-                dockerEnv = ${config.dockerConfig.env.joinToString(prefix = "[", postfix = "]") { "'$it'" }}
+                dockerEnv = ${asGroovyList(config.dockerConfig.env)}
 
                 dockerHostPort = ${config.dockerConfig.portMapping.host}
 
@@ -387,4 +422,6 @@ class IntegrationTest {
             }
 
         """.trimIndent()
+
+    private fun <T> asGroovyList(list: List<T>): String = list.joinToString(prefix = "[", postfix = "]") { "'$it'" }
 }

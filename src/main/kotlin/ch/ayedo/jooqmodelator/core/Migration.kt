@@ -4,6 +4,7 @@ import ch.ayedo.jooqmodelator.core.configuration.DatabaseConfig
 import ch.ayedo.jooqmodelator.core.configuration.MigrationConfig
 import ch.ayedo.jooqmodelator.core.configuration.MigrationEngine.FLYWAY
 import ch.ayedo.jooqmodelator.core.configuration.MigrationEngine.LIQUIBASE
+import liquibase.CatalogAndSchema
 import liquibase.Contexts
 import liquibase.Liquibase
 import liquibase.database.DatabaseFactory
@@ -26,13 +27,13 @@ interface Migrator {
     companion object {
         fun fromConfig(migrationConfig: MigrationConfig, databaseConfig: DatabaseConfig) =
             when (migrationConfig.engine) {
-                FLYWAY -> FlywayMigrator(databaseConfig, migrationConfig.migrationsPaths)
-                LIQUIBASE -> LiquibaseMigrator(databaseConfig, migrationConfig.migrationsPaths)
+                FLYWAY -> FlywayMigrator(databaseConfig, migrationConfig.migrationsPaths, migrationConfig.schemas)
+                LIQUIBASE -> LiquibaseMigrator(databaseConfig, migrationConfig.migrationsPaths, migrationConfig.schemas)
             }
     }
 }
 
-class FlywayMigrator(databaseConfig: DatabaseConfig, migrationsPaths: List<Path>) : Migrator {
+class FlywayMigrator(databaseConfig: DatabaseConfig, migrationsPaths: List<Path>, schemas: List<String>) : Migrator {
 
     private val flyway = Flyway().apply {
         with(databaseConfig) {
@@ -42,6 +43,10 @@ class FlywayMigrator(databaseConfig: DatabaseConfig, migrationsPaths: List<Path>
         val fileSystemPaths = migrationsPaths.map({ "filesystem:$it" }).toTypedArray()
 
         setLocations(*fileSystemPaths)
+
+        if (schemas.isNotEmpty()) {
+            setSchemas(*schemas.toTypedArray())
+        }
     }
 
     override fun clean() {
@@ -54,7 +59,7 @@ class FlywayMigrator(databaseConfig: DatabaseConfig, migrationsPaths: List<Path>
 
 }
 
-class LiquibaseMigrator(databaseConfig: DatabaseConfig, migrationsPaths: List<Path>) : Migrator {
+class LiquibaseMigrator(databaseConfig: DatabaseConfig, migrationsPaths: List<Path>, private val schemas: List<String>) : Migrator {
 
     private val liquibase: Liquibase
 
@@ -83,7 +88,8 @@ class LiquibaseMigrator(databaseConfig: DatabaseConfig, migrationsPaths: List<Pa
     }
 
     override fun clean() {
-        liquibase.dropAll()
+        val catalogsAndSchemas = schemas.map { CatalogAndSchema(null, it) }
+        liquibase.dropAll(*catalogsAndSchemas.toTypedArray())
     }
 
     override fun migrate() {

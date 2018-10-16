@@ -13,6 +13,8 @@ open class JooqModelatorExtension {
 
     var migrationsPaths: List<String>? = null
 
+    var schemas: List<String> = emptyList()
+
     var dockerTag: String? = null
 
     var dockerEnv: List<String> = emptyList()

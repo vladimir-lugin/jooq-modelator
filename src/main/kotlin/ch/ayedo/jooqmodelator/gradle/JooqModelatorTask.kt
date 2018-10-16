@@ -31,6 +31,9 @@ open class JooqModelatorTask : DefaultTask() {
     lateinit var dockerLabelKey: String
 
     @Input
+    lateinit var schemas: List<String>
+
+    @Input
     lateinit var dockerTag: String
 
     @Input
@@ -64,7 +67,7 @@ open class JooqModelatorTask : DefaultTask() {
 
         val healthCheckConfig = HealthCheckConfig(delayMs, maxDurationMs, sql)
 
-        val migrationsConfig = MigrationConfig(MigrationEngine.valueOf(migrationEngine), migrationsPaths)
+        val migrationsConfig = MigrationConfig(MigrationEngine.valueOf(migrationEngine), migrationsPaths, schemas)
 
         val config = Configuration(dockerConfig, healthCheckConfig, migrationsConfig, jooqConfigPath)
 

@@ -10,7 +10,7 @@ data class Configuration(val dockerConfig: DockerConfig,
     val migrationConfig: MigrationConfig,
     val jooqConfigPath: Path)
 
-data class MigrationConfig(val engine: MigrationEngine, val migrationsPaths: List<Path>)
+data class MigrationConfig(val engine: MigrationEngine, val migrationsPaths: List<Path>, val schemas: List<String> = emptyList())
 
 enum class MigrationEngine {
     FLYWAY,
