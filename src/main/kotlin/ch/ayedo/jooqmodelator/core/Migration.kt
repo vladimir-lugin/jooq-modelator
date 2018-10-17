@@ -35,17 +35,18 @@ interface Migrator {
 
 class FlywayMigrator(databaseConfig: DatabaseConfig, migrationsPaths: List<Path>, schemas: List<String>) : Migrator {
 
-    private val flyway = Flyway().apply {
+    private val flyway = Flyway().also {
         with(databaseConfig) {
-            setDataSource(url, user, password)
+            it.setDataSource(url, user, password)
         }
 
         val fileSystemPaths = migrationsPaths.map({ "filesystem:$it" }).toTypedArray()
 
-        setLocations(*fileSystemPaths)
+        it.setLocations(*fileSystemPaths)
+
 
         if (schemas.isNotEmpty()) {
-            setSchemas(*schemas.toTypedArray())
+            it.setSchemas(*schemas.toTypedArray())
         }
     }
 
