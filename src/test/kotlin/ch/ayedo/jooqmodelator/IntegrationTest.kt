@@ -2,7 +2,6 @@ package ch.ayedo.jooqmodelator
 
 import ch.ayedo.jooqmodelator.IntegrationTest.Database.MARIADB
 import ch.ayedo.jooqmodelator.IntegrationTest.Database.POSTGRES
-import ch.ayedo.jooqmodelator.core.Modelator
 import ch.ayedo.jooqmodelator.core.configuration.Configuration
 import ch.ayedo.jooqmodelator.core.configuration.DockerConfig
 import ch.ayedo.jooqmodelator.core.configuration.HealthCheckConfig
@@ -249,8 +248,8 @@ class IntegrationTest {
             healthCheckConfig = HealthCheckConfig(),
             migrationConfig = MigrationConfig(
                 engine = MigrationEngine.FLYWAY,
-                migrationsPaths = getMigrationPaths("/migrations"),
-                schemas = listOf("schema1")),
+                migrationsPaths = getMigrationPaths("/schemaMigrations"),
+                schemas = listOf()),
             jooqConfigPath = jooqConfig.toPath()
         )
 
@@ -356,7 +355,7 @@ class IntegrationTest {
 
         var arguments = listOf("generateJooqMetamodel", "--stacktrace")
 
-        if (allowIncremental) {
+        if (!allowIncremental) {
             arguments += "--rerun-tasks"
         }
 
