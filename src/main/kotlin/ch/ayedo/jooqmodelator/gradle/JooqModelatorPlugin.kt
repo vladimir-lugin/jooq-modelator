@@ -9,7 +9,6 @@ import java.nio.file.Paths
 open class JooqModelatorPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        println("=======================================  apply HI MONEYMAN! ============================================")
 
         project.extensions.create("jooqModelator", JooqModelatorExtension::class.java)
 
@@ -24,7 +23,9 @@ open class JooqModelatorPlugin : Plugin<Project> {
             addJooqDependency(project, modelatorRuntime, config)
 
             val task = project.tasks.create("generateJooqMetamodel", JooqModelatorTask::class.java).apply {
-                println("================================task  HI MONEYMAN!  ============================================")
+
+                println("================================ HI MONEYMAN!  ============================================")
+
 
                 description = "Generates the jOOQ metamodel from migrations files using a dockerized database."
 
@@ -38,6 +39,12 @@ open class JooqModelatorPlugin : Plugin<Project> {
                     ?: throw IncompletePluginConfigurationException("path to the migration files (migrationsPaths)")
 
                 dockerLabelKey = config.labelKey
+
+                cleanContainers = config.cleanContainers
+
+                schemaName = config.schemaName
+
+                schemaHistoryTable = config.schemaHistoryTable
 
                 dockerEnv = config.dockerEnv
 

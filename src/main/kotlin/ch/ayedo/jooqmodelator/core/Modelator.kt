@@ -3,6 +3,7 @@ package ch.ayedo.jooqmodelator.core
 import ch.ayedo.jooqmodelator.core.configuration.Configuration
 import ch.ayedo.jooqmodelator.core.configuration.DatabaseConfig
 import com.spotify.docker.client.DefaultDockerClient
+import com.spotify.docker.client.DockerClient
 import org.slf4j.LoggerFactory
 
 class Modelator(configuration: Configuration) {
@@ -30,17 +31,14 @@ class Modelator(configuration: Configuration) {
             }
 
             val existingContainers = docker.findLabeledContainers(key = dockerConfig.labelKey, value = dockerConfig.labelValue)
+            existingContainers.forEach { c ->
+                docker.removeContainer(
+                    c.id(),
+                    DockerClient.RemoveContainerParam.forceKill()
+                )
+            }
 
-            val containerId =
-                if (existingContainers.isEmpty()) {
-                    docker.createContainer(dockerConfig.toContainerConfig()).id()!!
-                } else {
-                    if (existingContainers.size > 1) {
-                        log.warn("More than one container with tag ${dockerConfig.labelKey}=$tag has been found. " +
-                            "Using the one which was most recently created")
-                    }
-                    existingContainers.sortedBy({ it.created() }).map({ it.id() }).first()
-                }
+            val containerId = docker.createContainer(dockerConfig.toContainerConfig()).id()!!
 
             docker.useContainer(containerId) {
                 waitForDatabase()
@@ -57,7 +55,7 @@ class Modelator(configuration: Configuration) {
     }
 
     private fun migrateDatabase() {
-        val migrator = Migrator.fromConfig(migrationConfig, databaseConfig)
+        val migrator = Migrator.fromConfig(migrationConfig, databaseConfig, dockerConfig)
 
         with(migrator) {
             clean()

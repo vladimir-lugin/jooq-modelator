@@ -10,7 +10,10 @@ data class Configuration(val dockerConfig: DockerConfig,
     val migrationConfig: MigrationConfig,
     val jooqConfigPath: Path)
 
-data class MigrationConfig(val engine: MigrationEngine, val migrationsPaths: List<Path>)
+data class MigrationConfig(val engine: MigrationEngine,
+    val migrationsPaths: List<Path>,
+    val schemaName: String,
+    val schemaHistoryTable: String)
 
 enum class MigrationEngine {
     FLYWAY,
@@ -20,7 +23,9 @@ enum class MigrationEngine {
 data class DockerConfig(val tag: String,
     val labelKey: String = "ch.ayedo.jooqmodelator",
     val env: List<String>,
-    val portMapping: PortMapping) {
+    val portMapping: PortMapping,
+    val cleanContainer: Boolean = true
+) {
 
     val labelValue = "tag=$tag cport=${portMapping.container} hport=${portMapping.host} env=[${env.joinToString()}]"
 

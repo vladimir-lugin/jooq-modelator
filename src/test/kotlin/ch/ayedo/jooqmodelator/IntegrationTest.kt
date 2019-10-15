@@ -43,7 +43,10 @@ class IntegrationTest {
                 env = listOf("POSTGRES_DB=postgres", "POSTGRES_USER=postgres", "POSTGRES_PASSWORD=secret"),
                 portMapping = PortMapping(5432, 5432)),
             healthCheckConfig = HealthCheckConfig(),
-            migrationConfig = MigrationConfig(engine = MigrationEngine.FLYWAY, migrationsPaths = getMigrationPaths("/migrations", "/migrationsB")),
+            migrationConfig = MigrationConfig(engine = MigrationEngine.FLYWAY,
+                migrationsPaths = getMigrationPaths("/migrations", "/migrationsB"),
+                schemaName = "",
+                schemaHistoryTable = "flyway_schema_history"),
             jooqConfigPath = jooqConfig.toPath()
         )
 
@@ -68,7 +71,10 @@ class IntegrationTest {
                 env = listOf("POSTGRES_DB=postgres", "POSTGRES_USER=postgres", "POSTGRES_PASSWORD=secret"),
                 portMapping = PortMapping(5432, 5432)),
             healthCheckConfig = HealthCheckConfig(),
-            migrationConfig = MigrationConfig(engine = MigrationEngine.LIQUIBASE, migrationsPaths = getMigrationPaths("/migrations", "/migrationsB")),
+            migrationConfig = MigrationConfig(engine = MigrationEngine.LIQUIBASE,
+                migrationsPaths = getMigrationPaths("/migrations", "/migrationsB"),
+                schemaName = "",
+                schemaHistoryTable = "flyway_schema_history"),
             jooqConfigPath = jooqConfig.toPath()
         )
 
@@ -93,7 +99,10 @@ class IntegrationTest {
                 env = listOf("MYSQL_DATABASE=maria", "MYSQL_ROOT_PASSWORD=pass", "MYSQL_PASSWORD=pass"),
                 portMapping = PortMapping(3306, 3306)),
             healthCheckConfig = HealthCheckConfig(),
-            migrationConfig = MigrationConfig(engine = MigrationEngine.FLYWAY, migrationsPaths = getMigrationPaths("/migrations", "/migrationsB")),
+            migrationConfig = MigrationConfig(engine = MigrationEngine.FLYWAY,
+                migrationsPaths = getMigrationPaths("/migrations", "/migrationsB"),
+                schemaName = "",
+                schemaHistoryTable = "flyway_schema_history"),
             jooqConfigPath = jooqConfig.toPath()
         )
 
@@ -118,7 +127,10 @@ class IntegrationTest {
                 env = listOf("MYSQL_DATABASE=maria", "MYSQL_ROOT_PASSWORD=pass", "MYSQL_PASSWORD=pass"),
                 portMapping = PortMapping(3306, 3306)),
             healthCheckConfig = HealthCheckConfig(),
-            migrationConfig = MigrationConfig(engine = MigrationEngine.LIQUIBASE, migrationsPaths = getMigrationPaths("/migrations", "/migrationsB")),
+            migrationConfig = MigrationConfig(engine = MigrationEngine.LIQUIBASE,
+                migrationsPaths = getMigrationPaths("/migrations", "/migrationsB"),
+                schemaName = "",
+                schemaHistoryTable = "flyway_schema_history"),
             jooqConfigPath = jooqConfig.toPath()
         )
 
@@ -143,7 +155,10 @@ class IntegrationTest {
                 env = listOf("POSTGRES_DB=postgres", "POSTGRES_USER=postgres", "POSTGRES_PASSWORD=secret"),
                 portMapping = PortMapping(5432, 5432)),
             healthCheckConfig = HealthCheckConfig(),
-            migrationConfig = MigrationConfig(engine = MigrationEngine.FLYWAY, migrationsPaths = getMigrationPaths("/migrations", "/migrationsB")),
+            migrationConfig = MigrationConfig(engine = MigrationEngine.FLYWAY,
+                migrationsPaths = getMigrationPaths("/migrations", "/migrationsB"),
+                schemaName = "",
+                schemaHistoryTable = "flyway_schema_history"),
             jooqConfigPath = jooqConfig.toPath()
         )
 
@@ -172,7 +187,10 @@ class IntegrationTest {
                 env = listOf("POSTGRES_DB=postgres", "POSTGRES_USER=postgres", "POSTGRES_PASSWORD=secret"),
                 portMapping = PortMapping(5432, 5432)),
             healthCheckConfig = HealthCheckConfig(),
-            migrationConfig = MigrationConfig(engine = MigrationEngine.FLYWAY, migrationsPaths = getMigrationPaths("/migrations") + listOf(additionalMigrationsDir)),
+            migrationConfig = MigrationConfig(engine = MigrationEngine.FLYWAY,
+                migrationsPaths = getMigrationPaths("/migrations") + listOf(additionalMigrationsDir),
+                schemaName = "",
+                schemaHistoryTable = "flyway_schema_history"),
             jooqConfigPath = jooqConfig.toPath()
         )
 
@@ -208,7 +226,10 @@ class IntegrationTest {
                 env = listOf("POSTGRES_DB=postgres", "POSTGRES_USER=postgres", "POSTGRES_PASSWORD=secret"),
                 portMapping = PortMapping(firstPort, 5432)),
             healthCheckConfig = HealthCheckConfig(),
-            migrationConfig = MigrationConfig(engine = MigrationEngine.FLYWAY, migrationsPaths = getMigrationPaths("/migrations", "/migrationsB")),
+            migrationConfig = MigrationConfig(engine = MigrationEngine.FLYWAY,
+                migrationsPaths = getMigrationPaths("/migrations", "/migrationsB"),
+                schemaName = "",
+                schemaHistoryTable = "flyway_schema_history"),
             jooqConfigPath = jooqConfig.toPath()
         )
 
@@ -224,7 +245,10 @@ class IntegrationTest {
                 env = listOf("POSTGRES_DB=postgres", "POSTGRES_USER=postgres", "POSTGRES_PASSWORD=secret"),
                 portMapping = PortMapping(secondPort, 5432)),
             healthCheckConfig = HealthCheckConfig(),
-            migrationConfig = MigrationConfig(engine = MigrationEngine.FLYWAY, migrationsPaths = getMigrationPaths("/migrations", "/migrationsB")),
+            migrationConfig = MigrationConfig(engine = MigrationEngine.FLYWAY,
+                migrationsPaths = getMigrationPaths("/migrations", "/migrationsB"),
+                schemaName = "",
+                schemaHistoryTable = "flyway_schema_history"),
             jooqConfigPath = newJooqConfig.toPath()
         )
 

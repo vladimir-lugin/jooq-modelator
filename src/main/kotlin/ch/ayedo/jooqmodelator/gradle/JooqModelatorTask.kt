@@ -43,6 +43,15 @@ open class JooqModelatorTask : DefaultTask() {
     var dockerContainerPort: Int = 5432
 
     @Input
+    var cleanContainers: Boolean = true
+
+    @Input
+    var schemaName: String = ""
+
+    @Input
+    var schemaHistoryTable: String = "flyway_schema_history"
+
+    @Input
     lateinit var migrationEngine: String
 
     @Input
@@ -60,11 +69,13 @@ open class JooqModelatorTask : DefaultTask() {
     @TaskAction
     fun generateMetamodel() {
 
-        val dockerConfig = DockerConfig(dockerTag, dockerLabelKey, dockerEnv, PortMapping(dockerHostPort, dockerContainerPort))
+        val dockerConfig = DockerConfig(dockerTag, dockerLabelKey, dockerEnv, PortMapping(dockerHostPort,
+            dockerContainerPort), cleanContainers)
 
         val healthCheckConfig = HealthCheckConfig(delayMs, maxDurationMs, sql)
 
-        val migrationsConfig = MigrationConfig(MigrationEngine.valueOf(migrationEngine), migrationsPaths)
+        val migrationsConfig = MigrationConfig(MigrationEngine.valueOf(migrationEngine), migrationsPaths, schemaName,
+            schemaHistoryTable)
 
         val config = Configuration(dockerConfig, healthCheckConfig, migrationsConfig, jooqConfigPath)
 

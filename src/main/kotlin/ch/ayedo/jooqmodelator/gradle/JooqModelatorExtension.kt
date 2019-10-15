@@ -30,4 +30,10 @@ open class JooqModelatorExtension {
     var sql: String = "SELECT 1"
 
     var labelKey: String = "ch.ayedo.jooqmodelator"
+
+    var cleanContainers: Boolean = true
+
+    var schemaName: String = ""
+
+    var schemaHistoryTable: String = "flyway_schema_history"
 }

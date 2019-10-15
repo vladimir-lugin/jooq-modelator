@@ -1,6 +1,7 @@
 package ch.ayedo.jooqmodelator.core
 
 import ch.ayedo.jooqmodelator.core.configuration.DatabaseConfig
+import ch.ayedo.jooqmodelator.core.configuration.DockerConfig
 import ch.ayedo.jooqmodelator.core.configuration.MigrationConfig
 import ch.ayedo.jooqmodelator.core.configuration.MigrationEngine.FLYWAY
 import ch.ayedo.jooqmodelator.core.configuration.MigrationEngine.LIQUIBASE
@@ -24,29 +25,38 @@ interface Migrator {
     fun migrate()
 
     companion object {
-        fun fromConfig(migrationConfig: MigrationConfig, databaseConfig: DatabaseConfig) =
+        fun fromConfig(migrationConfig: MigrationConfig, databaseConfig: DatabaseConfig, dockerConfig: DockerConfig) =
             when (migrationConfig.engine) {
-                FLYWAY -> FlywayMigrator(databaseConfig, migrationConfig.migrationsPaths)
+                FLYWAY -> FlywayMigrator(databaseConfig, migrationConfig, dockerConfig)
                 LIQUIBASE -> LiquibaseMigrator(databaseConfig, migrationConfig.migrationsPaths)
             }
     }
 }
 
-class FlywayMigrator(databaseConfig: DatabaseConfig, migrationsPaths: List<Path>) : Migrator {
+class FlywayMigrator(databaseConfig: DatabaseConfig,
+    migrationConfig: MigrationConfig,
+    private val dockerConfig: DockerConfig) :
+    Migrator {
 
     private val flyway = Flyway.configure().apply {
+        if(migrationConfig.schemaName.isNotEmpty()){
+            schemas(migrationConfig.schemaName)
+        }
+        table(migrationConfig.schemaHistoryTable)
+
         with(databaseConfig) {
             dataSource(url, user, password)
         }
 
-
-        val fileSystemPaths = migrationsPaths.map({ "filesystem:$it" }).toTypedArray()
+        val fileSystemPaths = migrationConfig.migrationsPaths.map({ "filesystem:$it" }).toTypedArray()
 
         locations(*fileSystemPaths)
     }.load()
 
     override fun clean() {
-        flyway.clean()
+        if(dockerConfig.cleanContainer){
+            flyway.clean()
+        }
     }
 
     override fun migrate() {
