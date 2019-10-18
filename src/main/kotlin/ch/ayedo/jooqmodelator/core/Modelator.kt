@@ -45,6 +45,11 @@ class Modelator(configuration: Configuration) {
                 migrateDatabase()
                 runJooqGenerator()
             }
+
+            docker.removeContainer(
+                containerId,
+                DockerClient.RemoveContainerParam.forceKill()
+            )
         }
     }
 
@@ -55,7 +60,7 @@ class Modelator(configuration: Configuration) {
     }
 
     private fun migrateDatabase() {
-        val migrator = Migrator.fromConfig(migrationConfig, databaseConfig, dockerConfig)
+        val migrator = Migrator.fromConfig(migrationConfig, databaseConfig)
 
         with(migrator) {
             clean()

@@ -8,6 +8,7 @@ import ch.ayedo.jooqmodelator.core.configuration.HealthCheckConfig
 import ch.ayedo.jooqmodelator.core.configuration.MigrationConfig
 import ch.ayedo.jooqmodelator.core.configuration.MigrationEngine
 import ch.ayedo.jooqmodelator.core.configuration.PortMapping
+import org.gradle.internal.impldep.org.junit.Ignore
 import org.gradle.internal.impldep.org.junit.Rule
 import org.gradle.internal.impldep.org.junit.rules.TemporaryFolder
 import org.gradle.testkit.runner.GradleRunner
@@ -22,7 +23,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 
-
+@Ignore
 class IntegrationTest {
 
     @Rule

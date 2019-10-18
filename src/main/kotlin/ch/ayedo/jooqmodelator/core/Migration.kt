@@ -25,18 +25,15 @@ interface Migrator {
     fun migrate()
 
     companion object {
-        fun fromConfig(migrationConfig: MigrationConfig, databaseConfig: DatabaseConfig, dockerConfig: DockerConfig) =
+        fun fromConfig(migrationConfig: MigrationConfig, databaseConfig: DatabaseConfig) =
             when (migrationConfig.engine) {
-                FLYWAY -> FlywayMigrator(databaseConfig, migrationConfig, dockerConfig)
+                FLYWAY -> FlywayMigrator(databaseConfig, migrationConfig)
                 LIQUIBASE -> LiquibaseMigrator(databaseConfig, migrationConfig.migrationsPaths)
             }
     }
 }
 
-class FlywayMigrator(databaseConfig: DatabaseConfig,
-    migrationConfig: MigrationConfig,
-    private val dockerConfig: DockerConfig) :
-    Migrator {
+class FlywayMigrator(databaseConfig: DatabaseConfig, private val migrationConfig: MigrationConfig) : Migrator {
 
     private val flyway = Flyway.configure().apply {
         if(migrationConfig.schemaName.isNotEmpty()){
@@ -54,7 +51,7 @@ class FlywayMigrator(databaseConfig: DatabaseConfig,
     }.load()
 
     override fun clean() {
-        if(dockerConfig.cleanContainer){
+        if(migrationConfig.cleanDatabase){
             flyway.clean()
         }
     }

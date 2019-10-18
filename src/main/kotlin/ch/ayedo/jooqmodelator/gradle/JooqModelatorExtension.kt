@@ -31,7 +31,7 @@ open class JooqModelatorExtension {
 
     var labelKey: String = "ch.ayedo.jooqmodelator"
 
-    var cleanContainers: Boolean = true
+    var cleanDatabase: Boolean = true
 
     var schemaName: String = ""
 

@@ -12,7 +12,7 @@ class GradleApplyTest {
 
         val project = ProjectBuilder.builder().build()
 
-        project.pluginManager.apply("ch.ayedo.jooqmodelator")
+        project.pluginManager.apply("com.mm.idf-jooq-modelator")
 
         val taskLookup = project.task(hashMapOf("type" to JooqModelatorTask::class.java), "generateJooqMetamodel")
 

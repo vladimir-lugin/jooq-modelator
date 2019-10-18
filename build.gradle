@@ -3,6 +3,7 @@ plugins {
     id 'com.gradle.plugin-publish' version '0.10.1'
 }
 
+//apply plugin: 'java-gradle-plugin'
 apply plugin: 'maven-publish'
 
 configurations {
@@ -19,7 +20,7 @@ test {
     useJUnitPlatform()
 }
 
-project.ext.version = '2.0'
+project.ext.version = '2.0.2'
 
 task createClasspathManifest {
     def outputDir = file("${buildDir}/${name}")
@@ -46,7 +47,7 @@ publishing {
         maven(MavenPublication) {
             groupId 'com.mm.idf-jooq-modelator'
             artifactId 'com.mm.idf-jooq-modelator.gradle.plugin'
-            version '2.0'
+            version '2.0.2'
             from components.java
         }
     }
@@ -73,4 +74,17 @@ dependencies {
     testRuntime('org.junit.jupiter:junit-jupiter-engine:5.5.1')
 }
 
+pluginBundle {
+    website = 'https://github.com/ayedo/jooq-modelator'
+    vcsUrl = 'https://github.com/ayedo/jooq-modelator.git'
+    tags = ['jOOQ', 'flyway', 'liquibase', 'migrations', 'metamodel']
+    plugins {
+        jooqModelatorPlugin {
+            id = 'ch.ayedo.jooqmodelator'
+            displayName = 'Jooq-Modelator'
+            description = 'Plugin to generate the jOOQ metamodel from Flyway & Liquibase migrations.'
+            version = project.ext.version
+        }
+    }
+}
 

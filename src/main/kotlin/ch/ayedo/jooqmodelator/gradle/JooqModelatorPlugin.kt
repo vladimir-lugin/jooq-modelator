@@ -40,7 +40,7 @@ open class JooqModelatorPlugin : Plugin<Project> {
 
                 dockerLabelKey = config.labelKey
 
-                cleanContainers = config.cleanContainers
+                cleanDatabase = config.cleanDatabase
 
                 schemaName = config.schemaName
 
